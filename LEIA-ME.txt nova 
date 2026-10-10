@@ -1,0 +1,38 @@
+AGENDA ESCOLAR - como colocar no ar e instalar como aplicativo
+
+O que tem nesta pasta
+- index.html ........... a agenda inteira (é o site)
+- manifest.webmanifest .. dados do aplicativo (nome, cores, ícones)
+- sw.js ................. faz a agenda abrir mesmo sem internet
+- icon-*.png e apple-touch-icon.png .. ícones
+
+ATENÇÃO: abrir o index.html com duplo clique funciona como página, mas NÃO
+instala como aplicativo. Para instalar, a pasta precisa estar hospedada em
+um endereço https (os passos abaixo fazem isso de graça).
+
+1) Colocar no ar (jeito mais simples: Netlify Drop)
+   a. Descompacte o zip.
+   b. Abra app.netlify.com/drop no navegador.
+   c. Arraste a PASTA descompactada para a área indicada.
+   d. Crie uma conta gratuita se o site pedir, para o endereço não expirar.
+   e. Copie o endereço gerado (algo como nome-aleatorio.netlify.app).
+   Os nomes dos botões podem mudar com o tempo. Outras opções gratuitas que
+   fazem o mesmo: GitHub Pages, Cloudflare Pages e Vercel.
+
+2) Instalar como aplicativo
+   - iPhone (Safari): abra o endereço, toque em Compartilhar e depois em
+     "Adicionar à Tela de Início".
+   - Android (Chrome): abra o endereço, toque no menu de três pontos e
+     depois em "Instalar app" ou "Adicionar à tela inicial".
+   - Computador (Chrome ou Edge): clique no ícone de instalar na barra de
+     endereço, quando aparecer.
+
+3) Seus dados
+   As atividades, matérias e notas ficam salvas só no navegador do aparelho
+   onde você anotou. Elas não passam para outro aparelho. Se você apagar os
+   dados do navegador (ou desinstalar o app), tudo some.
+
+4) Atualizar depois
+   Troque os arquivos na hospedagem. Se a versão antiga continuar aparecendo,
+   aumente o número em CACHE (por exemplo, de 'agenda-escolar-v3' para
+   'agenda-escolar-v4') dentro do sw.js.
