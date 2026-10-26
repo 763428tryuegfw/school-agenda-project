@@ -1,0 +1,8 @@
+# Copie para ".dev.vars" (arquivo que o .gitignore já ignora) só para testar no seu computador.
+# NÃO existe valor de exemplo de propósito: gere os seus com os comandos abaixo.
+#   npm run secret   -> cole o resultado em PEPPER
+#   npm run vapid    -> cole VAPID_PRIVATE (e coloque VAPID_PUBLIC no wrangler.jsonc)
+# Em produção estes valores vão no painel da Cloudflare como SEGREDOS, nunca em arquivos do repositório.
+PEPPER=
+VAPID_PRIVATE=
+RESEND_API_KEY=

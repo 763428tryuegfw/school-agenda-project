@@ -1,0 +1,53 @@
+AGENDA ESCOLAR — como publicar (Mac + GitHub + Cloudflare)
+============================================================
+
+O QUE MUDOU NESTA VERSÃO
+- Ícone novo (escudo com capelo, livro e seta) em todos os tamanhos.
+- Novos tipos: Prova, Teste, Apresentação, Seminário (além de Tarefa e Entrega).
+- Avisos: prazos perto, o que falta na semana e frases "dia 21/10 é prova de Matemática; dia 23/10 é apresentação...".
+- Login obrigatório (e-mail e senha). Os dados ficam na sua conta, no servidor.
+- Segurança completa (veja SECURITY.md e SECURITY-AUDIT.md).
+
+PASSO 1 — Colocar os arquivos no GitHub
+1. Abra a pasta do seu repositório no Mac. Apague tudo EXCETO a pasta oculta ".git".
+2. Copie para lá o conteúdo desta pasta (incluindo a pasta "public", "src" e o arquivo "wrangler.jsonc").
+3. No Terminal, dentro da pasta:
+     git add -A
+     git commit -m "Login, avisos e seguranca"
+     git push
+
+PASSO 2 — Comando de deploy no Cloudflare (corrige a página em branco)
+1. Cloudflare > Workers e Pages > seu Worker "school-agenda-project" > Configurações > Build.
+2. "Comando de implantação" (deploy command): deixe exatamente   npx wrangler deploy
+   (apague qualquer "--assets" ou outras opções antigas; a configuração está no wrangler.jsonc).
+3. Salve e faça um novo deploy.
+
+PASSO 3 — Segredos (obrigatório; sem isso o login não funciona)
+No Mac, com Node 22 ou mais novo instalado, dentro da pasta do projeto:
+     npm run secret      -> mostra a linha PEPPER=...
+     npm run vapid       -> mostra VAPID_PUBLIC=... e VAPID_PRIVATE=...
+No Cloudflare > seu Worker > Configurações > Variáveis e segredos > Adicionar:
+   - Tipo "Segredo": PEPPER  (cole o valor)   e   VAPID_PRIVATE  (cole o valor)
+NUNCA coloque esses dois no GitHub nem no wrangler.jsonc. Guarde uma cópia do PEPPER num lugar seguro:
+se você o trocar, TODAS as senhas deixam de funcionar.
+
+PASSO 4 — Valores públicos no wrangler.jsonc (em "vars")
+   CONTROLLER_NAME : seu nome (aparece na Política de Privacidade)
+   CONTACT_EMAIL   : seu e-mail de contato
+   VAPID_PUBLIC    : o valor VAPID_PUBLIC do passo 3
+   VAPID_SUBJECT   : "mailto:seu-email@exemplo.com"
+   PUBLIC_ORIGIN   : (opcional) "https://seu-site.workers.dev", usado nos links de e-mail
+Faça commit e push de novo.
+
+PASSO 5 — Conferir
+1. Abra  https://SEU-SITE/api/config  -> deve aparecer um texto JSON. Se a página estiver em branco, volte ao Passo 2.
+2. Abra o site, crie a conta e ANOTE os 8 códigos de recuperação (única forma de recuperar a conta sem e-mail).
+3. Ative os avisos em "Conta". No iPhone: Safari > Compartilhar > Adicionar à Tela de Início, e ative lá.
+
+ANTES DE DIVULGAR
+- Confirme que você pode usar o logo (origem/licença).
+- Peça revisão jurídica dos Termos e da Política de Privacidade (o site aceita usuários que podem ser menores).
+- Plano gratuito da Cloudflare: o cálculo da senha pode ser recusado por limite de CPU. Se o login falhar com erro 5xx, use o plano pago (US$ 5/mês).
+- Recuperar senha por e-mail é opcional: precisa de conta no Resend (RESEND_API_KEY como Segredo e MAIL_FROM em vars).
+
+TESTES (opcional)   npm test

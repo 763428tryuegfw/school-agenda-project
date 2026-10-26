@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E2C40">
+<meta name="color-scheme" content="light">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="stylesheet" href="app.css">
+<title>Cookies e armazenamento - Agenda Escolar</title>
+<script type="module" src="legal.js"></script>
+<script type="module" src="consent.js"></script>
+</head>
+<body>
+<main class="legal">
+<p><a href="./">&larr; Voltar para a Agenda</a></p>
+<h1>Cookies e armazenamento</h1>
+<p class="aviso">Versão <span data-version></span>. Este texto descreve o que o aplicativo realmente faz hoje. Ele foi preparado junto com o app e <strong>ainda não foi revisado por um profissional jurídico</strong>: o responsável pelo site deve conferir, completar os dados de contato e validar antes de divulgar para o público. Se você vir um texto entre colchetes, como [nome do responsável&hellip;], esse dado <strong>ainda não foi preenchido</strong> e o site não deve ser divulgado antes disso.</p>
+<h2>Resumo</h2>
+<p>A Agenda Escolar usa <strong>um único cookie, estritamente necessário</strong>, para manter você conectado. <strong>Hoje não usamos nenhum cookie ou rastreador opcional</strong>: nada de estatística, publicidade ou terceiros. O aviso de cookies que aparece na primeira visita existe para pedir a sua escolha, de forma clara, antes de qualquer item opcional ser ligado. Como não há item opcional em uso, "Aceitar opcionais" não ativa nada hoje, e "Recusar opcionais" não tira nenhuma função: o login e tudo o mais continuam funcionando.</p>
+<h2>Sua escolha</h2>
+<ul>
+<li>As duas opções, <strong>Aceitar opcionais</strong> e <strong>Recusar opcionais</strong>, têm o mesmo destaque. Nada opcional é ligado antes de você aceitar.</li>
+<li>A escolha fica só no seu aparelho, no item <code>agenda-cookies</code> do armazenamento do navegador (com a data e as escolhas anteriores). Ela não é enviada ao servidor.</li>
+<li>Para mudar ou retirar a escolha quando quiser: <button type="button" class="link-btn" data-consent="open">Preferências de cookies</button> (também no rodapé de todas as telas).</li>
+<li>Se um dia incluirmos algum item opcional, este texto será atualizado, a versão sobe e o aviso volta a perguntar.</li>
+</ul>
+
+<h2>Cookie necessário (sempre ligado)</h2>
+<ul>
+<li><strong>__Host-sid</strong> (necessário): identifica a sua sessão depois que você entra. O navegador o esconde de scripts (HttpOnly), só o envia por HTTPS (Secure) e só em navegação do próprio site (SameSite). Dura até 14 dias sem uso e no máximo 60 dias. Sai quando você clica em "Sair da conta".</li>
+</ul>
+
+<h2>Armazenamento no seu aparelho</h2>
+<ul>
+<li><strong>agenda-cookies</strong> (necessário para lembrar a sua escolha): guarda "aceitei" ou "recusei opcionais", a data e as escolhas anteriores.</li>
+<li><strong>agenda-avisos-local</strong>, <strong>agenda-avisos-dispensado</strong>, <strong>agenda-ultimo-aviso</strong>: lembram as suas escolhas sobre os avisos (se estão ativos neste aparelho, se você dispensou o convite e o dia do último aviso).</li>
+<li><strong>agenda-escolar-v1</strong>: só existe se você usava a versão antiga do app, sem contas. Serve para oferecer a importação para a sua conta e é apagado depois de importar ou quando você pedir.</li>
+<li><strong>agenda-legacy-skip</strong> (somente durante a visita): lembra que você escolheu "Agora não" na importação.</li>
+<li><strong>Cache do aplicativo</strong>: cópia dos arquivos do site (telas e ícones) para abrir mais rápido e sem internet. Nunca guarda as suas atividades nem dados da conta.</li>
+</ul>
+<p>Você pode apagar tudo isso nas configurações do navegador a qualquer momento. Isso apenas desconecta você e esquece as escolhas acima.</p>
+<p class="foot"><a href="privacidade.html">Privacidade</a><a href="termos.html">Termos de Uso</a><a href="cookies.html">Cookies e armazenamento</a><button type="button" class="link-btn" data-consent="open">Preferências de cookies</button></p>
+</main>
+</body>
+</html>

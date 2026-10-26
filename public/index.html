@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E2C40">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Agenda para anotar tarefas, entregas, provas, testes, apresentações e seminários, com calendário, rendimento, notas por matéria e avisos de prazo.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agenda Escolar">
+<meta property="og:title" content="Agenda Escolar">
+<meta property="og:description" content="Anote tarefas, provas e entregas, veja os prazos no calendário e acompanhe suas notas por matéria.">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Agenda">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="referrer" content="no-referrer">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="app.css">
+<title>Agenda Escolar</title>
+<script type="module" src="consent.js"></script>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<!-- Carregando / erro de conexão -->
+<div class="boot" id="boot" role="status">
+  <p id="boot-msg">Carregando…</p>
+  <button type="button" class="primary" id="boot-retry" data-do="retry" hidden>Tentar de novo</button>
+</div>
+
+<!-- Acesso: entrar, criar conta, recuperar senha -->
+<main class="auth" id="auth" hidden>
+  <div class="auth-card">
+    <img class="auth-logo" src="logo-96.png" width="72" height="72" alt="Logotipo da Agenda Escolar: escudo com capelo de formatura sobre um livro aberto e uma seta de crescimento">
+    <h1>Agenda <mark>Escolar</mark></h1>
+    <p class="auth-sub" id="auth-sub">Entre com seu e-mail e senha para ver suas atividades.</p>
+
+    <div class="auth-tabs" role="tablist" aria-label="Acesso" id="auth-tabs">
+      <button type="button" role="tab" id="at-login" aria-selected="true" aria-controls="af-login" data-auth="login">Entrar</button>
+      <button type="button" role="tab" id="at-reg" aria-selected="false" aria-controls="af-reg" data-auth="reg" tabindex="-1">Criar conta</button>
+    </div>
+
+    <form class="stack" id="af-login" role="tabpanel" aria-labelledby="at-login" novalidate>
+      <div class="field"><label for="l-email">E-mail</label>
+        <div class="mail-w"><input type="email" id="l-email" autocomplete="username" inputmode="email" maxlength="254" autocapitalize="none" spellcheck="false">
+          <svg class="mail-ok" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+      <div class="field"><label for="l-pw">Senha</label>
+        <div class="pw"><input type="password" id="l-pw" autocomplete="current-password" maxlength="1024">
+          <button type="button" class="ghost sm" data-show="l-pw" aria-pressed="false">Mostrar</button></div></div>
+      <div class="field" id="l-code-w" hidden><label for="l-code">Código do app autenticador (6 dígitos)</label>
+        <input type="text" id="l-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8"></div>
+      <p class="erro" id="l-err" role="alert" hidden></p>
+      <p class="ok-txt" id="l-ok" role="status" hidden></p>
+      <ol class="steps" id="l-steps" aria-label="Andamento da entrada" aria-live="polite" hidden>
+        <li data-s="1"><i></i><span>Credenciais</span></li>
+        <li data-s="2"><i></i><span>Verificação de segurança</span></li>
+        <li data-s="3"><i></i><span>Autenticação</span></li>
+      </ol>
+      <p class="welcome" id="l-welcome" role="status" hidden>Bem-vindo de volta!</p>
+      <button class="primary" type="submit" id="l-go">Entrar</button>
+      <button type="button" class="link" data-auth="forgot">Esqueci minha senha</button>
+      <p class="secure-note"><svg class="ic-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Conexão protegida. Sua senha nunca é guardada em texto, só uma impressão que não dá para desfazer.</p>
+    </form>
+
+    <form class="stack" id="af-reg" role="tabpanel" aria-labelledby="at-reg" novalidate hidden>
+      <div class="field"><label for="r-email">E-mail</label>
+        <div class="mail-w"><input type="email" id="r-email" autocomplete="username" inputmode="email" maxlength="254" autocapitalize="none" spellcheck="false">
+          <svg class="mail-ok" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+      <div class="field"><label for="r-pw">Crie uma senha</label>
+        <div class="pw"><input type="password" id="r-pw" autocomplete="new-password" maxlength="128" aria-describedby="r-pw-h">
+          <button type="button" class="ghost sm" data-show="r-pw" aria-pressed="false">Mostrar</button></div>
+        <span class="hint" id="r-pw-h">Pelo menos 10 caracteres. Uma frase longa funciona bem. Não use a mesma senha de outros sites.</span></div>
+      <div class="checks">
+        <label class="chk"><input type="checkbox" id="r-terms"><span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>.</span></label>
+        <label class="chk"><input type="checkbox" id="r-age"><span>Tenho 12 anos ou mais e, se sou menor de 18, meu responsável está de acordo com o uso do app.</span></label>
+      </div>
+      <p class="hint">Guardamos só o necessário: e-mail, senha (protegida, nunca em texto puro) e as atividades que você anotar.</p>
+      <p class="erro" id="r-err" role="alert" hidden></p>
+      <button class="primary" type="submit">Criar conta</button>
+    </form>
+
+    <form class="stack" id="af-forgot" novalidate hidden>
+      <h2>Recuperar acesso</h2>
+      <p class="hint">Use um dos códigos de recuperação que apareceram quando você criou a conta. Cada código funciona uma vez.</p>
+      <div class="field"><label for="f-r-email">E-mail da conta</label>
+        <input type="email" id="f-r-email" autocomplete="username" inputmode="email" maxlength="254" autocapitalize="none" spellcheck="false"></div>
+      <div class="field"><label for="f-r-code">Código de recuperação</label>
+        <input type="text" id="f-r-code" autocomplete="off" maxlength="20" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX"></div>
+      <div class="field" id="f-r-totp-w"><label for="f-r-totp">Código do app autenticador (só se você ativou)</label>
+        <input type="text" id="f-r-totp" inputmode="numeric" autocomplete="one-time-code" maxlength="8"></div>
+      <div class="field"><label for="f-r-pw">Nova senha</label>
+        <div class="pw"><input type="password" id="f-r-pw" autocomplete="new-password" maxlength="128">
+          <button type="button" class="ghost sm" data-show="f-r-pw" aria-pressed="false">Mostrar</button></div></div>
+      <p class="erro" id="f-r-err" role="alert" hidden></p>
+      <p class="ok-txt" id="f-r-ok" role="status" hidden></p>
+      <button class="primary" type="submit">Trocar a senha</button>
+      <button type="button" class="link" id="f-mail-btn" data-auth="mail" hidden>Prefiro receber um link por e-mail</button>
+      <button type="button" class="link" data-auth="login">Voltar para entrar</button>
+    </form>
+
+    <form class="stack" id="af-mail" novalidate hidden>
+      <h2>Receber link por e-mail</h2>
+      <p class="hint">Se existir uma conta com esse e-mail, enviaremos um link válido por 30 minutos e de uso único.</p>
+      <div class="field"><label for="m-email">E-mail da conta</label>
+        <input type="email" id="m-email" autocomplete="username" inputmode="email" maxlength="254" autocapitalize="none" spellcheck="false"></div>
+      <p class="erro" id="m-err" role="alert" hidden></p>
+      <p class="ok-txt" id="m-ok" role="status" hidden></p>
+      <button class="primary" type="submit">Enviar link</button>
+      <button type="button" class="link" data-auth="forgot">Voltar</button>
+    </form>
+
+    <form class="stack" id="af-reset" novalidate hidden>
+      <h2>Criar nova senha</h2>
+      <div class="field"><label for="x-pw">Nova senha</label>
+        <div class="pw"><input type="password" id="x-pw" autocomplete="new-password" maxlength="128">
+          <button type="button" class="ghost sm" data-show="x-pw" aria-pressed="false">Mostrar</button></div></div>
+      <div class="field"><label for="x-totp">Código do app autenticador (só se você ativou)</label>
+        <input type="text" id="x-totp" inputmode="numeric" autocomplete="one-time-code" maxlength="8"></div>
+      <p class="erro" id="x-err" role="alert" hidden></p>
+      <button class="primary" type="submit">Salvar nova senha</button>
+    </form>
+
+    <section class="stack" id="af-codes" aria-labelledby="codes-t" hidden>
+      <h2 id="codes-t">Guarde seus códigos de recuperação</h2>
+      <p class="hint">Se você esquecer a senha, estes códigos são a única forma de voltar para a conta. Cada um funciona uma vez e eles não serão mostrados de novo. Anote em papel ou salve num gerenciador de senhas.</p>
+      <ol class="codes" id="codes-list" aria-label="Códigos de recuperação"></ol>
+      <div class="btn-row">
+        <button type="button" class="ghost" data-do="codes-copy">Copiar</button>
+        <button type="button" class="ghost" data-do="codes-download">Baixar como arquivo</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="codes-ok"><span>Guardei os códigos em um lugar seguro.</span></label>
+      <button type="button" class="primary" id="codes-go" data-do="codes-go" disabled>Continuar</button>
+    </section>
+
+    <p class="foot"><a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a><a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a><a href="cookies.html" target="_blank" rel="noopener">Cookies e armazenamento</a><button type="button" class="link-btn" data-consent="open">Preferências de cookies</button></p>
+  </div>
+</main>
+
+<!-- Aplicativo (só aparece depois de entrar) -->
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <div class="brand">
+      <img class="logo" src="logo-96.png" width="46" height="46" alt="">
+      <div>
+        <h1>Agenda <mark>Escolar</mark></h1>
+        <p class="hoje-txt" id="hojeTxt"></p>
+      </div>
+    </div>
+    <div class="top-r">
+      <span class="status" id="status" role="status"></span>
+      <button type="button" class="ghost" id="btn-conta" data-do="conta-abrir" aria-haspopup="dialog">Conta e avisos</button>
+    </div>
+  </header>
+
+  <div class="banner" id="legacy-banner" hidden>
+    <p id="legacy-txt"></p>
+    <div class="btn-row">
+      <button type="button" class="primary sm" data-do="legacy-import">Importar para minha conta</button>
+      <button type="button" class="ghost sm" data-do="legacy-skip">Agora não</button>
+      <button type="button" class="ghost sm" data-do="legacy-drop">Apagar do aparelho</button>
+    </div>
+  </div>
+
+  <div class="banner" id="notif-banner" hidden>
+    <p>Quer receber avisos de prazos, provas, testes, apresentações e seminários neste aparelho?</p>
+    <div class="btn-row">
+      <button type="button" class="primary sm" data-do="notif-on">Ativar avisos</button>
+      <button type="button" class="ghost sm" data-do="notif-later">Agora não</button>
+    </div>
+  </div>
+
+  <main id="conteudo">
+  <section class="avisos" aria-labelledby="resT">
+    <div class="av-head"><h2 id="resT">Resumo da semana</h2></div>
+    <ul id="resList"></ul>
+  </section>
+
+  <section class="avisos" aria-labelledby="avisosT" aria-live="polite">
+    <div class="av-head">
+      <h2 id="avisosT">Avisos <span class="count" id="av-count" hidden></span></h2>
+      <div class="av-legend" aria-label="Legenda de cores">
+        <span><i class="dot red"></i>até 3 dias</span>
+        <span><i class="dot yel"></i>4 a 6 dias</span>
+        <span><i class="dot blue"></i>7 a 10 dias</span>
+      </div>
+    </div>
+    <ul id="avList"></ul>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Seções da agenda">
+    <button type="button" role="tab" id="t-semana" aria-selected="true" aria-controls="p-semana" data-tab="semana"><span class="ico"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg></span><span class="lbl"><span class="lg">Minha semana</span><span class="sh">Semana</span></span></button>
+    <button type="button" role="tab" id="t-cal" aria-selected="false" aria-controls="p-cal" data-tab="cal" tabindex="-1"><span class="ico"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><span class="lbl">Calendário</span></button>
+    <button type="button" role="tab" id="t-rend" aria-selected="false" aria-controls="p-rend" data-tab="rend" tabindex="-1"><span class="ico"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7M12 20V5M19 20v-10"/></svg></span><span class="lbl">Rendimento</span></button>
+    <button type="button" role="tab" id="t-mat" aria-selected="false" aria-controls="p-mat" data-tab="mat" tabindex="-1"><span class="ico"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/></svg></span><span class="lbl">Matérias</span></button>
+    <button type="button" role="tab" id="t-nova" aria-selected="false" aria-controls="p-nova" data-tab="nova" tabindex="-1"><span class="ico"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span><span class="lbl"><span class="lg">Nova atividade</span><span class="sh">Nova</span></span></button>
+    <button type="button" role="tab" id="t-feitas" aria-selected="false" aria-controls="p-feitas" data-tab="feitas" tabindex="-1"><span class="ico"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 9.5"/></svg></span><span class="lbl">Feitas</span><span class="count" id="n-feitas" hidden></span></button>
+  </nav>
+
+  <!-- Semana -->
+  <section class="panel" id="p-semana" role="tabpanel" aria-labelledby="t-semana">
+    <div class="vazio" id="vazio" hidden>
+      <div><strong>Sua agenda está vazia</strong><span>Anote a primeira atividade com o dia da entrega ou da prova.</span></div>
+      <button type="button" class="primary" data-action="ir-nova">Anotar atividade</button>
+    </div>
+    <div class="ph">
+      <div><h2 id="semana-range"></h2><p id="semana-sum"></p></div>
+      <div class="nav">
+        <button type="button" data-action="wk-prev">&larr; Anterior</button>
+        <button type="button" data-action="wk-hoje">Esta semana</button>
+        <button type="button" data-action="wk-next">Próxima &rarr;</button>
+      </div>
+    </div>
+    <div class="semana" id="semana-grid"></div>
+  </section>
+
+  <!-- Calendário -->
+  <section class="panel" id="p-cal" role="tabpanel" aria-labelledby="t-cal" hidden>
+    <div class="ph">
+      <h2 id="cal-ano"></h2>
+      <div class="nav">
+        <button type="button" data-action="yr-prev" aria-label="Ano anterior">&larr; Ano anterior</button>
+        <button type="button" data-action="yr-hoje">Hoje</button>
+        <button type="button" data-action="yr-next" aria-label="Próximo ano">Próximo ano &rarr;</button>
+      </div>
+    </div>
+    <div class="legenda" aria-label="Legenda">
+      <span><i class="dot red"></i>até 3 dias</span>
+      <span><i class="dot yel"></i>4 a 6 dias</span>
+      <span><i class="dot blue"></i>7 a 10 dias</span>
+      <span><i class="dot far"></i>mais de 10 dias</span>
+      <span><i class="sq"></i>quadrado: tem prova, teste, apresentação ou seminário</span>
+      <span><i class="ring-h"></i>hoje</span>
+    </div>
+    <div class="duo">
+      <div class="card">
+        <h3 id="cal-sel-t"></h3>
+        <div id="cal-sel-l"></div>
+        <button type="button" class="ghost self-start" id="cal-add" data-action="add-day">Anotar neste dia</button>
+      </div>
+      <div class="card">
+        <h3>Próximas datas</h3>
+        <div id="cal-next"></div>
+      </div>
+    </div>
+    <div class="meses" id="cal-meses"></div>
+  </section>
+
+  <!-- Rendimento -->
+  <section class="panel" id="p-rend" role="tabpanel" aria-labelledby="t-rend" hidden>
+    <div class="ph">
+      <div><h2>Seu aproveitamento</h2><p>Atividades feitas dividido pelo total anotado no período.</p></div>
+      <div class="chips" role="group" aria-label="Período">
+        <button type="button" data-action="rend-f" data-v="tudo" aria-pressed="true">Tudo</button>
+        <button type="button" data-action="rend-f" data-v="mes" aria-pressed="false">Este mês</button>
+        <button type="button" data-action="rend-f" data-v="semana" aria-pressed="false">Esta semana</button>
+      </div>
+    </div>
+    <div class="rend-top">
+      <div class="card"><div class="ringbox" id="rend-ring"></div></div>
+      <div class="card"><h3>Contagem</h3><div class="nums" id="rend-nums"></div></div>
+    </div>
+    <div class="duo">
+      <div class="card"><h3>Por matéria</h3><ul class="bars" id="rend-mat"></ul></div>
+      <div class="card"><h3>Por tipo</h3><ul class="bars" id="rend-tipo"></ul></div>
+    </div>
+  </section>
+
+  <!-- Matérias -->
+  <section class="panel" id="p-mat" role="tabpanel" aria-labelledby="t-mat" hidden>
+    <div class="ph"><div><h2>Matérias</h2><p>Abra uma matéria para ver o que você já fez e quantos pontos já tem.</p></div></div>
+    <div class="mats" id="mats"></div>
+  </section>
+
+  <!-- Nova atividade -->
+  <section class="panel" id="p-nova" role="tabpanel" aria-labelledby="t-nova" hidden>
+    <div class="ph"><div><h2>Anotar atividade</h2><p>Escreva o que você precisa fazer e o dia em que precisa entregar.</p></div></div>
+    <form class="card form" id="form" novalidate>
+      <div class="field full">
+        <label for="f-titulo">O que você precisa fazer</label>
+        <input type="text" id="f-titulo" maxlength="120" autocomplete="off" placeholder="Ex.: Lista de exercícios 4 de Matemática">
+      </div>
+      <div class="field">
+        <label for="f-materia">Matéria</label>
+        <input type="text" id="f-materia" maxlength="40" list="lista-materias" autocomplete="off" placeholder="Ex.: Matemática">
+        <datalist id="lista-materias"></datalist>
+      </div>
+      <div class="field">
+        <label for="f-data" id="f-data-l">Dia da entrega</label>
+        <input type="date" id="f-data">
+      </div>
+      <div class="full cols">
+      <div class="colL">
+      <fieldset class="field full">
+        <legend>Tipo</legend>
+        <div class="seg">
+          <label><input type="radio" name="tipo" id="tipo-tarefa" value="tarefa" checked><span>Tarefa</span></label>
+          <label><input type="radio" name="tipo" id="tipo-entrega" value="entrega"><span>Entrega de trabalho</span></label>
+          <label><input type="radio" name="tipo" id="tipo-prova" value="prova"><span>Prova</span></label>
+          <label><input type="radio" name="tipo" id="tipo-teste" value="teste"><span>Teste</span></label>
+          <label><input type="radio" name="tipo" id="tipo-apresentacao" value="apresentacao"><span>Apresentação</span></label>
+          <label><input type="radio" name="tipo" id="tipo-seminario" value="seminario"><span>Seminário</span></label>
+        </div>
+      </fieldset>
+      <div class="field full" id="fc-wrap" hidden>
+        <label for="f-comp">Vale nota em (opcional)</label>
+        <select id="f-comp"><option value="">Nenhum</option></select>
+      </div>
+      <div class="field full">
+        <label for="f-obs">Observação (opcional)</label>
+        <textarea id="f-obs" maxlength="300" placeholder="Capítulos da prova, material que precisa levar..."></textarea>
+      </div>
+      </div>
+      <div class="colR"><div id="up-nova" class="field"></div></div>
+      </div>
+      <p class="erro full" id="f-erro" role="alert" hidden></p>
+      <div class="full"><button type="submit" class="primary">Salvar atividade</button></div>
+    </form>
+
+    <div class="ph"><div><h2>Distribuição da nota</h2><p>Como o professor reparte os 10 pontos da matéria. Você acompanha seus pontos na aba Matérias.</p></div></div>
+    <form class="card form" id="form-dist" novalidate>
+      <div class="full cols">
+      <div class="colL">
+      <div class="field">
+        <label for="fd-materia">Matéria</label>
+        <input type="text" id="fd-materia" maxlength="40" list="lista-materias" autocomplete="off" placeholder="Ex.: Matemática">
+      </div>
+      <div class="field full">
+        <label for="f-dist">Itens da nota e quanto vale cada um</label>
+        <input type="text" id="f-dist" maxlength="200" autocomplete="off" placeholder="Ex.: caderno 2, prova 4, trabalho 3">
+        <div id="dist-prev" aria-live="polite"></div>
+      </div>
+      </div>
+      <div class="colR"><div id="up-dist" class="field"></div></div>
+      </div>
+      <p class="erro full" id="fd-erro" role="alert" hidden></p>
+      <div class="full"><button type="submit" class="primary">Salvar distribuição</button></div>
+    </form>
+
+    <div class="ph"><h2>A fazer</h2></div>
+    <div class="card" id="lista"></div>
+  </section>
+
+  <!-- Feitas -->
+  <section class="panel" id="p-feitas" role="tabpanel" aria-labelledby="t-feitas" hidden>
+    <div class="ph">
+      <div><h2>Atividades feitas</h2><p id="feitas-sum"></p></div>
+      <input type="search" class="busca" id="f-busca" placeholder="Buscar por título ou matéria" aria-label="Buscar nas atividades feitas" autocomplete="off">
+    </div>
+    <div id="feitas-lista"></div>
+  </section>
+
+  </main>
+  <p class="foot"><a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a><a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a><a href="cookies.html" target="_blank" rel="noopener">Cookies e armazenamento</a><button type="button" class="link-btn" data-consent="open">Preferências de cookies</button></p>
+</div>
+
+<div class="toast" id="toast" role="status" hidden><span id="toast-t"></span><button type="button" id="toast-undo" data-action="undo" hidden>Desfazer</button></div>
+
+<!-- Arquivos anexados a uma atividade -->
+<dialog class="dlg" id="arq" aria-labelledby="arq-t">
+  <div class="dlg-in">
+    <div class="dlg-h"><h2 id="arq-t">Arquivos</h2><button type="button" class="ghost" data-up="arq-fechar">Fechar</button></div>
+    <ul class="up-list" id="arq-list" aria-label="Arquivos anexados"></ul>
+    <div id="arq-view" class="arq-view"></div>
+  </div>
+</dialog>
+
+<!-- Conta, avisos e privacidade -->
+<dialog class="dlg" id="conta" aria-labelledby="conta-t">
+  <div class="dlg-in">
+    <div class="dlg-h"><h2 id="conta-t">Conta e avisos</h2><button type="button" class="ghost" data-do="conta-fechar">Fechar</button></div>
+    <p class="muted" id="conta-email"></p>
+
+    <section class="sec" aria-labelledby="nt-t">
+      <h3 id="nt-t">Avisos neste aparelho</h3>
+      <p id="nt-status" role="status"></p>
+      <div class="field"><label for="nt-hora">Hora do aviso diário</label>
+        <select id="nt-hora"></select></div>
+      <div class="btn-row">
+        <button type="button" class="primary" id="nt-toggle" data-do="nt-toggle">Ativar avisos</button>
+        <button type="button" class="ghost" id="nt-test" data-do="nt-test">Enviar aviso de teste</button>
+      </div>
+      <p class="hint" id="nt-hint"></p>
+    </section>
+
+    <details class="sec" id="sec-seg">
+      <summary>Segurança da conta</summary>
+      <form class="sub-f" id="f-pw" novalidate>
+        <h4>Trocar a senha</h4>
+        <div class="field"><label for="pw-cur">Senha atual</label><input type="password" id="pw-cur" autocomplete="current-password" maxlength="1024"></div>
+        <div class="field"><label for="pw-new">Nova senha</label><input type="password" id="pw-new" autocomplete="new-password" maxlength="128"></div>
+        <div class="field" data-totp hidden><label for="pw-code">Código do app autenticador</label><input type="text" id="pw-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8"></div>
+        <p class="erro" id="pw-err" role="alert" hidden></p><p class="ok-txt" id="pw-ok" role="status" hidden></p>
+        <button class="primary self-start" type="submit">Trocar senha</button>
+        <p class="hint">Ao trocar, os outros aparelhos saem da conta.</p>
+      </form>
+
+      <div class="sub-f" id="tf-area">
+        <h4>Verificação em duas etapas (app autenticador)</h4>
+        <p class="hint" id="tf-state"></p>
+        <form class="stack" id="f-tf-setup" novalidate hidden>
+          <div class="field"><label for="tf-pw">Confirme sua senha</label><input type="password" id="tf-pw" autocomplete="current-password" maxlength="1024"></div>
+          <p class="erro" id="tf-err" role="alert" hidden></p>
+          <button class="primary self-start" type="submit">Começar</button>
+        </form>
+        <form class="stack" id="f-tf-enable" novalidate hidden>
+          <p class="hint">No seu app autenticador (Google Authenticator, Microsoft Authenticator, 1Password, etc.), adicione uma conta digitando esta chave:</p>
+          <div class="secret" id="tf-secret"></div>
+          <p class="hint">Se o seu aparelho abrir o link, ele já adiciona a conta: <a id="tf-uri" href="#">abrir no app autenticador</a></p>
+          <div class="field"><label for="tf-code">Código de 6 dígitos que o app mostra</label><input type="text" id="tf-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8"></div>
+          <p class="erro" id="tf-err2" role="alert" hidden></p>
+          <button class="primary self-start" type="submit">Ativar</button>
+        </form>
+        <form class="stack" id="f-tf-disable" novalidate hidden>
+          <div class="field"><label for="tfd-pw">Sua senha</label><input type="password" id="tfd-pw" autocomplete="current-password" maxlength="1024"></div>
+          <div class="field"><label for="tfd-code">Código do app autenticador</label><input type="text" id="tfd-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8"></div>
+          <p class="erro" id="tfd-err" role="alert" hidden></p>
+          <button class="ghost self-start" type="submit">Desativar</button>
+        </form>
+      </div>
+
+      <form class="sub-f" id="f-rc" novalidate>
+        <h4>Códigos de recuperação</h4>
+        <p class="hint" id="rc-state">Gerar códigos novos invalida os anteriores.</p>
+        <div class="field"><label for="rc-pw">Sua senha</label><input type="password" id="rc-pw" autocomplete="current-password" maxlength="1024"></div>
+        <div class="field" data-totp hidden><label for="rc-code">Código do app autenticador</label><input type="text" id="rc-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8"></div>
+        <p class="erro" id="rc-err" role="alert" hidden></p>
+        <ol class="codes" id="rc-list" aria-label="Novos códigos de recuperação" hidden></ol>
+        <button class="ghost self-start" type="submit">Gerar códigos novos</button>
+      </form>
+
+      <div class="sub-f">
+        <h4>Aparelhos conectados</h4>
+        <ul class="sess" id="sess-list"></ul>
+        <button type="button" class="ghost self-start" data-do="sess-others">Sair dos outros aparelhos</button>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-dados">
+      <summary>Meus dados</summary>
+      <div class="sub-f">
+        <h4>Baixar meus dados</h4>
+        <p class="hint">Um arquivo com os dados da sua conta e todas as suas atividades e matérias.</p>
+        <button type="button" class="ghost self-start" data-do="export">Baixar arquivo</button>
+        <p class="erro" id="ex-err" role="alert" hidden></p>
+      </div>
+      <form class="sub-f" id="f-del" novalidate>
+        <h4>Excluir minha conta</h4>
+        <p class="hint">Apaga a conta e todas as atividades, matérias e avisos de forma definitiva. Não dá para desfazer.</p>
+        <div class="field"><label for="del-pw">Sua senha</label><input type="password" id="del-pw" autocomplete="current-password" maxlength="1024"></div>
+        <div class="field" data-totp hidden><label for="del-code">Código do app autenticador</label><input type="text" id="del-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8"></div>
+        <div class="field"><label for="del-confirm">Digite EXCLUIR para confirmar</label><input type="text" id="del-confirm" autocomplete="off" maxlength="10" autocapitalize="characters"></div>
+        <p class="erro" id="del-err" role="alert" hidden></p>
+        <button class="danger self-start" type="submit">Excluir conta para sempre</button>
+      </form>
+    </details>
+
+    <div class="btn-row"><button type="button" class="primary" data-do="logout">Sair da conta</button></div>
+    <p class="foot"><a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a><a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a><a href="cookies.html" target="_blank" rel="noopener">Cookies e armazenamento</a><button type="button" class="link-btn" data-consent="open">Preferências de cookies</button></p>
+  </div>
+</dialog>
+</body>
+</html>

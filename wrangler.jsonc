@@ -1,0 +1,29 @@
+{
+  // Agenda Escolar: um único Worker que serve o site (pasta public/), a API (/api/*) e o aviso diário (cron).
+  // Os dados ficam num Durable Object com SQLite (classe AppDB). Não é preciso criar banco nenhum à mão.
+  "name": "school-agenda-project",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+
+  // Todo pedido passa pelo Worker para receber os cabeçalhos de segurança (CSP, HSTS etc.).
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": true, "not_found_handling": "404-page" },
+
+  "durable_objects": { "bindings": [{ "name": "DB", "class_name": "AppDB" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["AppDB"] }],
+
+  // Roda de hora em hora e envia o aviso das pessoas cuja hora escolhida já chegou.
+  "triggers": { "crons": ["0 * * * *"] },
+
+  "observability": { "enabled": true },
+
+  // Valores PÚBLICOS (podem ficar no repositório). Preencha o que quiser; veja LEIA-ME.txt.
+  // SEGREDOS (PEPPER, VAPID_PRIVATE, RESEND_API_KEY) NUNCA entram aqui: cadastre-os em
+  // Cloudflare > seu Worker > Configurações > Variáveis e segredos > Adicionar > tipo "Segredo".
+  "vars": {
+    "REGISTRATION_OPEN": "true",       // "false" fecha novos cadastros
+    "CONTROLLER_NAME": "",             // nome do responsável pelo site (aparece na Política de Privacidade)
+    "CONTACT_EMAIL": "",               // e-mail de contato para pedidos de privacidade e segurança
+    "VAPID_PUBLIC": "",                // chave pública dos avisos (gerada por: npm run vapid)
+    "VAPID_SUBJECT": ""                // "mailto:seu-contato@exemplo.com" (identifica o servidor de avisos)
+  }
+}

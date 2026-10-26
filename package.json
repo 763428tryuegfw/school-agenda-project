@@ -1,0 +1,15 @@
+{
+  "name": "agenda-escolar",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Agenda Escolar: PWA com contas (e-mail e senha), notificações e backend em Cloudflare Workers.",
+  "scripts": {
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/*.test.mjs\"",
+    "icons": "python3 scripts/make-icons.py",
+    "vapid": "node scripts/gen-vapid.mjs",
+    "secret": "node scripts/gen-secret.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "engines": { "node": ">=22" }
+}
